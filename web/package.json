@@ -1,0 +1,14 @@
+{
+  "name": "memeaim-web",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "build": "node build.cjs",
+    "prestart": "npm run build",
+    "start": "node server.cjs",
+    "test": "node --test --test-isolation=none core.test.mjs"
+  },
+  "dependencies": { "three": "0.180.0" }
+}

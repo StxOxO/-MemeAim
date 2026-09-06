@@ -171,3 +171,9 @@ A: Close the app, delete `save_data.json` next to the exe, and relaunch.
 - **Python 3.12**
 - **pygame 2.6** (rendering, input, audio)
 - **PyInstaller** (packaging as a standalone exe)
+
+## 3D Web Version / 3D 网页版
+
+A standalone browser version is available in [`web/`](web/README.md), with Gridshot, Tracking, Flick, first-person controls, a held 3D weapon, and the existing meme sounds. The Python desktop version is unchanged.
+
+需要 Node.js 22+：在 `web/` 中运行 `npm ci`、`npm start`，然后打开 http://localhost:8765 。详细操作、测试及静态托管说明见 [网页版文档](web/README.md)。
