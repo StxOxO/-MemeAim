@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#101419"><title>MemeAim 3D · 练到手感在线</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23c5f66b'/%3E%3Ccircle cx='16' cy='16' r='8' fill='none' stroke='%23101419' stroke-width='3'/%3E%3Ccircle cx='16' cy='16' r='3'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<aside class="rail"><a class="brand-icon" href="./" aria-label="MemeAim 首页">◎</a><div class="rail-line"></div><button class="rail-item active" data-tab="training" aria-label="训练场">⌖</button><button class="rail-item" data-tab="records" aria-label="训练记录">▥</button><button class="rail-item" data-tab="sound" aria-label="音效管理">♫</button><div class="rail-bottom">3D<span class="online-dot"></span></div></aside>
+<div class="workspace">
+  <header><a href="./" class="wordmark">MEME<span>AIM</span><sup>3D</sup></a><nav><button data-tab="training" class="nav-tab active">训练场</button><button data-tab="records" class="nav-tab">训练记录</button><button data-tab="sound" class="nav-tab">音效管理</button></nav><span class="local-badge"><i></i> 浏览器训练 · 本地成绩</span></header>
+  <main>
+    <section id="training-panel" class="page-panel">
+      <div class="page-heading"><div><div class="eyebrow">YOUR DAILY AIM ROUTINE</div><h1>练到手感在线<span>。</span></h1><p>准一点，快一点。还有亿点点梗。</p></div><div class="session-label"><span>训练场 / 01</span><strong>THE GRID ROOM <span>↗</span></strong></div></div>
+      <div class="training-layout">
+        <div class="left-column">
+          <section id="arena" class="arena" aria-label="3D 训练场">
+            <div id="scene"></div>
+            <div class="arena-top"><span class="scene-badge"><i></i> <span id="arena-mode">GRIDSHOT</span></span><div class="arena-actions"><button id="mute" aria-label="切换静音" title="切换静音">♫</button><button id="fullscreen" aria-label="切换全屏" title="切换全屏">⛶</button></div></div>
+            <div id="hud" class="hud" hidden><div><small>得分</small><b id="score">0</b></div><div><small>剩余时间</small><b id="timer">60.0</b></div><div><small>命中率</small><b id="accuracy">0%</b></div><div><small>连击</small><b id="combo">0</b></div></div>
+            <div id="reticle" class="reticle" hidden><i></i><i></i><i></i><i></i></div>
+            <div id="hit-marker" class="hit-marker"></div><div id="feedback" class="feedback" aria-live="polite"></div>
+            <div id="preview-caption" class="preview-caption"><span class="tiny-label">LIVE 3D PREVIEW</span><h2>专注你的下一枪。</h2><p>立体靶球 · 真实视角 · 即刻进入状态</p></div>
+            <div id="arena-bottom" class="arena-bottom"><span><i class="online-dot"></i> 训练场就绪</span><span>鼠标瞄准 <kbd>LMB</kbd> 射击 <kbd>ESC</kbd> 暂停</span></div>
+            <div id="overlay" class="overlay" hidden><div class="overlay-card"><span id="overlay-tag" class="eyebrow">GET READY</span><h2 id="overlay-title">准备开始</h2><div id="overlay-body"></div><div id="overlay-actions"></div></div></div>
+            <div id="fatal" class="fatal" hidden></div>
+          </section>
+          <div class="section-title"><h2>选择训练模式</h2><span>每天一点，手感更稳</span></div>
+          <div class="mode-grid">
+            <button class="mode-card selected" data-mode="gridshot" aria-pressed="true"><span class="mode-art dots"><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="mode-number">01 <span class="mode-check">✓</span></span><strong>精准速点 <small>GRIDSHOT</small></strong><p>快速切换目标，找到你的节奏。</p><span class="mode-footer">速度 / 精度 <b>↗</b></span></button>
+            <button class="mode-card" data-mode="tracking" aria-pressed="false"><span class="mode-art tracking-art">◌<i></i></span><span class="mode-number">02 <span class="mode-check">✓</span></span><strong>移动追踪 <small>TRACKING</small></strong><p>跟住移动靶球，保持稳定命中。</p><span class="mode-footer">跟枪 / 稳定 <b>↗</b></span></button>
+            <button class="mode-card" data-mode="flick" aria-pressed="false"><span class="mode-art flick-art">⌁<i></i></span><span class="mode-number">03 <span class="mode-check">✓</span></span><strong>闪现甩枪 <small>FLICK</small></strong><p>捕捉转瞬即逝的目标。</p><span class="mode-footer">反应 / 爆发 <b>↗</b></span></button>
+          </div>
+          <div class="tip"><span>✦</span><p><b>今日练枪建议</b> 先求打得准，再求打得快。放松手腕，保持自己的节奏。</p><span>KEEP IT CONSISTENT</span></div>
+        </div>
+        <aside class="settings-panel"><div class="settings-heading"><h2>训练设置</h2><button id="reset" class="text-button">重置 ↺</button></div>
+          <div class="field"><label for="duration">训练时长 <output id="duration-out">60 s</output></label><select id="duration"><option value="10">10 秒 · 快速体验</option><option value="30">30 秒 · 热身</option><option value="60">60 秒 · 标准训练</option><option value="90">90 秒 · 进阶训练</option><option value="120">120 秒 · 耐力训练</option><option value="180">180 秒 · 长时训练</option></select></div>
+          <div class="field"><label for="sensitivity">鼠标灵敏度 <output id="sensitivity-out"></output></label><input id="sensitivity" type="range" min="0.2" max="3" step="0.1"><div class="range-label"><span>0.2×</span><span>3.0×</span></div></div>
+          <div class="field"><label for="radius">靶球大小 <output id="radius-out"></output></label><input id="radius" type="range" min="0.15" max="0.6" step="0.05"></div>
+          <div class="field"><label for="count">靶球数量 <output id="count-out"></output></label><input id="count" type="range" min="1" max="10" step="1"></div>
+          <div class="field mode-field" id="speed-field" hidden><label for="speed">移动速度 <output id="speed-out"></output></label><input id="speed" type="range" min="0.5" max="5" step="0.25"></div>
+          <div class="field mode-field" id="lifetime-field" hidden><label for="lifetime">目标停留 <output id="lifetime-out"></output></label><input id="lifetime" type="range" min="0.2" max="3" step="0.1"></div>
+          <div class="field"><label for="control">瞄准方式</label><select id="control"><option value="fps">第一人称 · 鼠标转动视角</option><option value="cursor">自由指针 · 点击立体靶球</option></select></div>
+          <div class="settings-divider"></div><div class="crosshair-heading"><h3>准星</h3><span>实时预览</span></div>
+          <div class="crosshair-options"><div id="crosshair-preview"><div class="reticle"><i></i><i></i><i></i><i></i></div></div><div><label for="crosshair" class="sr-only">准星样式</label><select id="crosshair"><option value="cross">十字准星</option><option value="dot">圆点准星</option><option value="circle">圆环准星</option></select><div class="swatches" aria-label="准星颜色"><button data-color="#c5f66b" style="--swatch:#c5f66b" aria-label="青柠色准星"></button><button data-color="#ffffff" style="--swatch:#ffffff" aria-label="白色准星"></button><button data-color="#52dfff" style="--swatch:#52dfff" aria-label="蓝色准星"></button><button data-color="#ff78ac" style="--swatch:#ff78ac" aria-label="粉色准星"></button></div></div></div>
+          <div class="sound-toggle"><div><strong>梗音效</strong><small>每一枪，都有节目效果</small></div><label class="switch"><input id="sound-enabled" type="checkbox" aria-label="开启梗音效"><span></span></label></div>
+          <button id="start" class="primary start-button"><span>开始训练</span><span>→</span></button><p class="start-note">建议使用电脑 + 鼠标，获得最佳体验</p>
+          <div class="personal-best"><span>♜ 当前配置最佳</span><strong id="personal-best">—</strong></div>
+        </aside>
+      </div>
+    </section>
+    <section id="records-panel" class="page-panel" hidden><div class="page-heading"><div><div class="eyebrow">MAKE EVERY SESSION COUNT</div><h1>看见你的进步<span>。</span></h1><p>最近 50 次训练，仅保存在当前浏览器。最佳成绩按模式和配置分别计算。</p></div></div><div id="records-content"></div></section>
+    <section id="sound-panel" class="page-panel" hidden><div class="page-heading"><div><div class="eyebrow">A LITTLE LESS SERIOUS</div><h1>每一枪都有梗<span>。</span></h1><p>来自原项目的音效。选择喜欢的声音，训练时随机播放。</p></div></div><div class="volume-row"><label for="volume">音效音量</label><input id="volume" type="range" min="0" max="1" step="0.05"><output id="volume-out"></output></div><div id="sound-content" class="sound-content"></div></section>
+  </main>
+  <footer><span>MEMEAIM <b>3D</b> <i>/</i> 小练一下，大有手感。</span><a href="https://github.com/Passerbyask/-MemeAim" target="_blank" rel="noopener noreferrer">基于 Passerbyask / MemeAim ↗</a></footer>
+</div>
+<div id="toast" class="toast" role="status" hidden></div>
+<script type="module" src="app.js"></script>
+</body></html>
