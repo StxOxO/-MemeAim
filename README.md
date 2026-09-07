@@ -1,3 +1,13 @@
+## 🖥️ Windows 3D 软件版
+
+现有 3D 版本支持打包为独立 Windows 软件，提供 **免安装版（Portable.zip）** 和 **安装版（Setup.exe）**。两者均自带运行环境、音效及视频，安装或解压后直接运行，可离线游玩，不需要安装 Python 或 Node.js。
+
+发布文件位于仓库 **Releases**。Windows 10 / 11 x64；需支持 WebGL 2 的显卡。当前安装包未做商业代码签名，可能显示未知发布者。旧 Python 版源码继续保留，下面的桌面版原说明仍适用于它。
+
+构建、自动发布和版本管理详见 **[desktop/README.md](desktop/README.md)**。GitHub Actions 在推送版本标签后自动构建、检查打包后的程序，再发布安装版和免安装版。
+
+---
+
 ## 🌐 3D 网页版：运行与部署
 
 网页版位于 `web/`，使用 Three.js 提供 Gridshot、Tracking、Flick 三种训练模式、第一人称手持枪、梗音效与全屏特效。网页构建后是纯静态文件，无需 Python、数据库或常驻游戏后端；下方仍保留原桌面版说明。

@@ -1,0 +1,68 @@
+{
+  "name": "memeaim-desktop",
+  "version": "1.0.0",
+  "private": true,
+  "description": "MemeAim 3D offline aim trainer with meme reactions",
+  "author": "MemeAim contributors",
+  "main": "main.cjs",
+  "scripts": {
+    "build:web": "npm --prefix ../web run build",
+    "start": "npm run build:web && electron .",
+    "test": "node --test asset-server.test.cjs",
+    "pack": "npm run build:web && electron-builder --win --x64 --dir",
+    "dist": "npm run build:web && electron-builder --win --x64 --publish never",
+    "smoke": "node run-smoke.cjs"
+  },
+  "devDependencies": {
+    "electron": "44.2.0",
+    "electron-builder": "26.15.3"
+  },
+  "build": {
+    "appId": "io.github.passerbyask.memeaim",
+    "productName": "MemeAim 3D",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "main.cjs",
+      "asset-server.cjs",
+      "smoke.cjs",
+      "icon.ico"
+    ],
+    "extraResources": [
+      {
+        "from": "../web/dist",
+        "to": "web",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ],
+    "win": {
+      "icon": "icon.ico",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "zip",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "artifactName": "MemeAim-3D-${version}-Windows-x64-Setup.exe",
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "deleteAppDataOnUninstall": false
+    },
+    "artifactName": "MemeAim-3D-${version}-Windows-${arch}-Portable.${ext}"
+  }
+}
