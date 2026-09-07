@@ -30,4 +30,17 @@
 | continued.mp4 | [To Be Continued](https://tiengdong.com/en/en58975) | rexter；截取 5–7 秒，静音 |
 | gwenchana.mp4 | [Gwenchanayo](https://tiengdong.com/video-gwenchanayo-green-screen-portrait) | @semuaviralmedsosreborn2639Ty；截取 3–5 秒，静音 |
 
-全屏烟花、火焰、爆炸、冲击波、流星和礼花为本项目 Canvas 程序绘制，不是第三方视频素材。
+全屏效果已改为下列下载视频，Canvas 仅用于抠绿合成。
+
+
+## 全屏视频素材
+
+全部依照 Pixabay Content License 使用，静音、640px 宽、20fps、2.6 秒裁剪并实时抠绿，作为游戏反馈合成。原始素材未直接分发。
+
+| 文件 | 作者与来源 | 截取 |
+| --- | --- | --- |
+| screen-fire.mp4 | Sanjaymahakud / https://pixabay.com/videos/fire-flames-green-screen-126094/ | 1–3.6 秒，卡通火焰 |
+| screen-blast.mp4 | Andrewfai / https://pixabay.com/videos/explosion-fire-fireworks-smoke-201449/ | 0–2.6 秒，浓烟爆炸 |
+| screen-sparkles.mp4 | BoVibol / https://pixabay.com/videos/fireworks-sky-stars-green-screen-164015/ | 3–5.6 秒，连续烟花 |
+| screen-explosion.mp4 | Luis_Humanoide / https://pixabay.com/videos/explosion-green-screen-fire-bomb-240090/ | 0–2.6 秒，火球爆炸 |
+| screen-fireworks.mp4 | 3DContentStore / https://pixabay.com/videos/green-screen-fireworks-239970/ | 0–2.6 秒，烟花 |
