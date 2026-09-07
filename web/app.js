@@ -1,7 +1,7 @@
 import * as THREE from './vendor/three.module.js';
 import {defaults,modes,sanitizeSettings,configKey,Session} from './core.mjs';
 import {HeldWeapon} from './weapon.js';
-import {MemeEffects} from './meme-effects.mjs';
+import {MemeEffects,ScreenEffects} from './meme-effects.mjs';
 
 const $=id=>document.getElementById(id);
 const STORAGE='memeaim-3d-v1';
@@ -16,6 +16,7 @@ let manifest={hit:[],miss:[]},activeAudio=[],audioContext,toastTimeout;
 let scene,camera,renderer,raycaster,geometry,targetMaterial,ringGeometry,ringMaterial;
 let weapon;
 const memes=new MemeEffects($('arena'),toast);
+const screenEffects=new ScreenEffects($('arena'));
 let activeSynth=[];
 let inputMode=settings.control,playBounds={x:5.2,y:2.45},cursorPoint=new THREE.Vector2();
 const numericFields=['duration','sensitivity','radius','count','speed','lifetime','volume'];
@@ -30,7 +31,7 @@ function syncSettings(){
   $('speed-out').textContent=settings.speed.toFixed(2)+' m/s';$('lifetime-out').textContent=settings.lifetime.toFixed(1)+' s';$('volume-out').textContent=Math.round(settings.volume*100)+'%';
   $('count').disabled=mode==='flick';$('speed-field').hidden=mode!=='tracking';$('lifetime-field').hidden=mode!=='flick';
   $('sound-enabled').checked=settings.sound;$('mute').textContent=settings.sound?'♫':'♪';$('mute').setAttribute('aria-pressed',String(!settings.sound));
-  $('effects-enabled').checked=settings.effects;memes.setEnabled(settings.effects);
+  $('effects-enabled').checked=settings.effects;memes.setEnabled(settings.effects);screenEffects.setEnabled(settings.effects);
   document.documentElement.style.setProperty('--crosshair',settings.color);
   document.querySelectorAll('.reticle').forEach(el=>el.className='reticle '+settings.crosshair);
   document.querySelectorAll('[data-color]').forEach(el=>{el.classList.toggle('selected',el.dataset.color===settings.color);el.setAttribute('aria-pressed',String(el.dataset.color===settings.color));});
@@ -42,6 +43,7 @@ for(const key of ['control','crosshair'])$(key).addEventListener('change',e=>{se
 $('sound-enabled').addEventListener('change',e=>{settings.sound=e.target.checked;settingChanged();if(!settings.sound)stopAudio();});
 $('effects-enabled').addEventListener('change',e=>{settings.effects=e.target.checked;settingChanged();});
 for(const group of ['hit','miss'])$('preview-'+group).addEventListener('click',()=>{unlockAudio();const clip=memes.trigger(group,performance.now(),true);if(clip?.kind==='blast')boom();else playRandom(group);});
+$('preview-screen').addEventListener('click',()=>{unlockAudio();screenEffects.trigger(performance.now(),true);boom();});
 $('preview-dragon').addEventListener('click',()=>{unlockAudio();memes.trigger('hit',performance.now(),true,'effects/chinese-dragon.mp4');boom();});
 document.querySelectorAll('[data-color]').forEach(el=>el.addEventListener('click',()=>{settings.color=el.dataset.color;settingChanged();}));
 $('reset').addEventListener('click',()=>{settings={...defaults};settingChanged();toast('训练设置已恢复默认，历史成绩已保留。');});
@@ -139,7 +141,7 @@ function frame(now){
   for(let i=particles.length-1;i>=0;i--){const p=particles[i];p.life-=dt;p.mesh.position.addScaledVector(p.velocity,dt);p.mesh.scale.multiplyScalar(Math.exp(-dt*5));if(p.life<=0){scene.remove(p.mesh);particles.splice(i,1);}}
   if(now>feedbackUntil){$('feedback').textContent='';$('hit-marker').className='hit-marker';}
   if(!$('training-panel').hidden && !document.hidden){
-    memes.update(now);
+    memes.update(now);screenEffects.update(now);
     renderer.render(scene,camera);
     if(state!=='preview'){weapon.update(state==='running'?dt:0,now/1000);weapon.render(renderer);}
   }
@@ -154,7 +156,7 @@ function setOverlay(tag,title,body,buttons){
 }
 function unlock(){if(document.pointerLockElement)document.exitPointerLock();}
 function start(){
-  if(!renderer)return;memes.hide();stopAudio();inputMode=settings.control;session=new Session(mode,settings);state='ready';
+  if(!renderer)return;memes.hide();screenEffects.hide();stopAudio();inputMode=settings.control;session=new Session(mode,settings);state='ready';
   document.body.classList.add('playing');$('preview-caption').hidden=true;$('arena-bottom').hidden=true;$('hud').hidden=false;
   $('reticle').hidden=true;camera.position.set(0,3.5,11);camera.rotation.set(0,0,0);resize();populate();updateHud();
   setOverlay('READY WHEN YOU ARE',modes[mode].name,inputMode==='fps'?'鼠标转动视角，左键射击。按 Esc 暂停并释放鼠标。':'移动指针，点击立体靶球。触屏可直接点靶球。按 Esc 暂停。',[{text:'进入训练',action:activate,primary:true},{text:'返回训练场',action:home}]);
@@ -173,10 +175,10 @@ async function activate(){
 }
 function lockFallback(){if(!['ready','paused'].includes(state))return;setOverlay('BROWSER COMPATIBILITY','请选择自由指针模式','当前浏览器未允许锁定鼠标。可以直接点击 3D 靶球，或在 Chrome / Edge 中重试。',[{text:'用自由指针继续',primary:true,action:()=>{inputMode='cursor';session.settings.control='cursor';camera.rotation.set(0,0,0);run();}},{text:'重试鼠标锁定',action:activate},{text:'返回训练场',action:home}]);}
 function run(){state='running';lastFrame=performance.now();$('overlay').hidden=true;$('reticle').hidden=inputMode!=='fps';renderer.domElement.style.cursor=inputMode==='cursor'?'crosshair':'none';}
-function pause(){if(state!=='running')return;state='paused';memes.hide();unlock();stopAudio();$('reticle').hidden=true;setOverlay('TAKE A BREATH','训练已暂停','时间已冻结，放松一下手腕。',[{text:'继续训练',primary:true,action:activate},{text:'结束并查看结果',action:()=>finish(false)},{text:'返回训练场',action:home}]);}
-function home(){state='preview';memes.hide();unlock();stopAudio();document.body.classList.remove('playing');$('overlay').hidden=true;$('hud').hidden=true;$('reticle').hidden=true;$('preview-caption').hidden=false;$('arena-bottom').hidden=false;renderer.domElement.style.cursor='default';camera.rotation.set(0,0,0);$('feedback').textContent='';feedbackUntil=0;resize();populate(true);syncSettings();}
+function pause(){if(state!=='running')return;state='paused';memes.hide();screenEffects.hide();unlock();stopAudio();$('reticle').hidden=true;setOverlay('TAKE A BREATH','训练已暂停','时间已冻结，放松一下手腕。',[{text:'继续训练',primary:true,action:activate},{text:'结束并查看结果',action:()=>finish(false)},{text:'返回训练场',action:home}]);}
+function home(){state='preview';memes.hide();screenEffects.hide();unlock();stopAudio();document.body.classList.remove('playing');$('overlay').hidden=true;$('hud').hidden=true;$('reticle').hidden=true;$('preview-caption').hidden=false;$('arena-bottom').hidden=false;renderer.domElement.style.cursor='default';camera.rotation.set(0,0,0);$('feedback').textContent='';feedbackUntil=0;resize();populate(true);syncSettings();}
 function finish(completed){
-  if(state==='results'||state==='preview')return;state='results';memes.hide();session.finished=true;unlock();$('reticle').hidden=true;stopAudio();
+  if(state==='results'||state==='preview')return;state='results';memes.hide();screenEffects.hide();session.finished=true;unlock();$('reticle').hidden=true;stopAudio();
   const result=session.result(completed);history.unshift(result);history=history.slice(0,50);
   const oldBest=Number.isFinite(bests[result.key])?bests[result.key]:-1;const newBest=completed&&result.score>oldBest;
   if(newBest)bests[result.key]=result.score;persist();
@@ -203,8 +205,8 @@ function pointerDown(e){
   if(intersection){const index=targets.findIndex(t=>t.mesh===intersection.object);const target=targets[index];burst(target.mesh.position);scene.remove(target.mesh);targets.splice(index,1);spawn();}
   $('feedback').textContent=intersection?(session.combo>=5?`${session.combo} 连击！`:'+1'):'MISS';$('feedback').style.color=intersection?'#c5f66b':'#ff7b8c';
   $('hit-marker').className='hit-marker '+(intersection?'hit':'miss');feedbackUntil=performance.now()+350;
-  const group=intersection?'hit':'miss';const reaction=memes.trigger(group);
-  if(reaction?.kind==='blast')boom();else playRandom(group);updateHud();
+  const group=intersection?'hit':'miss';const reaction=memes.trigger(group);const fullScreen=screenEffects.trigger();
+  if(fullScreen||reaction?.kind==='blast')boom();else playRandom(group);updateHud();
 }
 $('mute').addEventListener('click',()=>{settings.sound=!settings.sound;persist();syncSettings();if(!settings.sound)stopAudio();});
 $('fullscreen').addEventListener('click',async()=>{try{if(document.fullscreenElement)await document.exitFullscreen();else await $('arena').requestFullscreen();}catch{toast('当前浏览器不支持全屏，请使用 F11 或在独立浏览器中打开。');}});

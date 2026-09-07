@@ -5,3 +5,5 @@
 .effect-preview-actions button{flex:1;padding:8px 5px;font-size:11px;border:1px solid #43513a;background:#242f21;color:#c5f66b;border-radius:5px}
 .effect-setting{margin:18px 0 12px}
 @media(max-width:880px){.effect-setting,.effect-preview-actions{grid-column:1/-1}.effect-setting{margin-top:20px}.effect-preview-actions{margin-bottom:0}}
+
+.screen-effects{position:absolute;inset:0;width:100%;height:100%;z-index:5;pointer-events:none}.effect-preview-actions{flex-wrap:wrap}

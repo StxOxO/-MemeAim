@@ -25,3 +25,9 @@
 爆炸作者 Luis_Humanoide，烟火作者 3DContentStore；来源页标注 Pixabay Content License：https://pixabay.com/service/license-summary/ 。
 
 来源检查日期：2026-09-07。原素材下载仅用于本地处理，运行时不请求上述站点。
+
+| thug-life.mp4 | [Thug Life](https://tiengdong.com/en/en58851) | Tech No；截取 3–5 秒，静音 |
+| continued.mp4 | [To Be Continued](https://tiengdong.com/en/en58975) | rexter；截取 5–7 秒，静音 |
+| gwenchana.mp4 | [Gwenchanayo](https://tiengdong.com/video-gwenchanayo-green-screen-portrait) | @semuaviralmedsosreborn2639Ty；截取 3–5 秒，静音 |
+
+全屏烟花、火焰、爆炸、冲击波、流星和礼花为本项目 Canvas 程序绘制，不是第三方视频素材。

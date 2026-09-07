@@ -1,6 +1,21 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {keyGreen,shouldTrigger,memeClips,randomLayout} from './meme-effects.mjs';
+import {keyGreen,shouldTrigger,memeClips,randomLayout,ScreenEffects,canScreenTrigger} from './meme-effects.mjs';
+
+test('全屏效果限频、关闭、暂停和超时清理',()=>{
+  assert.equal(canScreenTrigger(3199,0),false);assert.equal(canScreenTrigger(3200,0),true);
+  const old=globalThis.document;
+  globalThis.document={createElement:()=>({setAttribute(){},getContext:()=>({})})};
+  try{
+    const fx=new ScreenEffects({append(){}});
+    assert.equal(fx.trigger(0,true,'fire'),true);assert.equal(fx.active,true);
+    assert.equal(fx.trigger(100),false);
+    fx.setEnabled(false);assert.equal(fx.active,false);assert.equal(fx.canvas.hidden,true);
+    assert.equal(fx.trigger(4000),false);
+    fx.trigger(5000,true,'fireworks');fx.update(7300);assert.equal(fx.active,false);
+    fx.trigger(8000,true,'explosion');fx.hide();assert.equal(fx.canvas.hidden,true);
+  }finally{globalThis.document=old;}
+});
 
 test('移除绿幕而保留皮肤、白衣和黑色',()=>{
   const pixels=new Uint8ClampedArray([0,220,0,255,120,80,60,255,240,240,240,255,10,10,10,255]);
@@ -16,8 +31,8 @@ test('连续射击限频且命中、打空均可切换',()=>{
   assert.equal(shouldTrigger(399,0,'miss','hit'),false);
   assert.equal(shouldTrigger(400,0,'miss','hit'),true);
   assert.equal(shouldTrigger(400,0,'hit','miss'),true);
-  assert.equal(memeClips.hit.length,9);assert.equal(memeClips.miss.length,9);
-  assert.equal(new Set(Object.values(memeClips).flat().map(c=>c.url)).size,15);
+  assert.equal(memeClips.hit.length,11);assert.equal(memeClips.miss.length,11);
+  assert.equal(new Set(Object.values(memeClips).flat().map(c=>c.url)).size,18);
 });
 
 test('随机位置和尺寸在横屏、竖屏、小窗口内均不越界',()=>{
