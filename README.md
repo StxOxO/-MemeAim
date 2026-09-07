@@ -1,3 +1,65 @@
+## 🌐 3D 网页版：运行与部署
+
+网页版位于 `web/`，使用 Three.js 提供 Gridshot、Tracking、Flick 三种训练模式、第一人称手持枪、梗音效与全屏特效。网页构建后是纯静态文件，无需 Python、数据库或常驻游戏后端；下方仍保留原桌面版说明。
+
+### 1. 准备环境
+
+- 安装 **Node.js 22 或更新版本**（包含 npm）。
+- 克隆或下载**整个仓库**，不要只复制 `web/`：构建还会读取仓库根目录的 `sounds/`。
+- 首次安装依赖需要联网；构建完成后，Three.js、音效和视频均由部署的网站自身提供。
+
+### 2. 本地启动
+
+在仓库根目录打开终端，执行：
+
+```sh
+cd web
+npm ci
+npm start
+```
+
+`npm start` 会先自动构建，然后在本机启动静态服务。浏览器打开 `http://localhost:8765`，按 `Ctrl+C` 停止服务。
+
+此服务仅监听 `127.0.0.1`，用于本机预览。请通过 HTTP 服务访问，不要直接双击 `index.html`，否则浏览器可能阻止 JavaScript 模块加载。
+
+### 3. 构建可部署文件
+
+在 `web/` 目录执行：
+
+```sh
+npm ci
+npm run build
+```
+
+输出目录是 **`web/dist/`**，其中包含页面、脚本、Three.js、音效和特效视频。只部署这个目录的**全部内容**，不要上传整个源码仓库或 `node_modules/`。
+
+### 4. 部署到静态托管或自己的服务器
+
+支持静态文件的托管平台或 Web 服务器即可运行本项目。若平台从 Git 仓库自动构建，可按下面配置：
+
+| 配置项 | 值 |
+| --- | --- |
+| 检出内容 | 完整仓库，包含根目录 `sounds/` |
+| 构建工作目录 | 仓库根目录 |
+| Node.js 版本 | 22 或更新版本 |
+| 安装与构建命令 | `npm --prefix web ci && npm --prefix web run build` |
+| 发布目录 | `web/dist` |
+| 运行时后端 / 启动命令 | 不需要，直接提供静态文件 |
+
+如果平台把构建工作目录设为 `web/`，命令改为 `npm ci && npm run build`，发布目录改为 `dist`；仍须确保构建时能读取上一级 `sounds/`。
+
+自行部署时，将 `web/dist/` 内的文件复制到站点目录，使 `index.html` 位于访问路径的首页位置，并保持 `vendor/`、`sounds/`、`effects/` 等目录结构。建议启用 HTTPS；服务器须正确提供 `.js` / `.mjs` 的 JavaScript 类型及 `.mp4` 的 `video/mp4` 类型。
+
+### 5. 更新与检查
+
+修改源码、音效或视频后，重新运行 `npm run build`，再用新的 `web/dist/` 更新站点。若托管平台配置了自动构建，推送代码后由平台重新构建发布。
+
+部署后检查：三种模式能进入训练、鼠标能锁定和释放、命中与打空音效正常、特效可以预览和关闭。浏览器需要在用户点击后才能播放声音或锁定鼠标。设置和成绩保存在当前浏览器，不会跨设备同步；清除网站数据会删除本地记录。
+
+更多操作、功能说明及素材来源见 **[web/README.md](web/README.md)**。
+
+---
+
 # MemeAim (特别热闹的练枪软件)
 
 **MemeAim** is an AimLab-style **2D aim trainer** that helps you improve your FPS accuracy and speed. Built around shooting small balls, it offers multiple training modes, sensitivity adjustment, crosshair customization, sound management, and score tracking — packed with meme sound effects.
