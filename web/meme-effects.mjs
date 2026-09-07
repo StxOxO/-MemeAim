@@ -152,3 +152,77 @@ export class MemeEffects {
     }catch{this.hide();}
   }
 }
+
+export const particleKinds=["fireworks","fire","explosion","shockwave","meteors","confetti"];
+export class ParticleScreenEffects {
+  constructor(host){
+    this.host=host;this.enabled=true;this.lastStart=-Infinity;this.lastKind=null;this.active=false;
+    this.canvas=document.createElement('canvas');this.canvas.className='screen-effects';this.canvas.hidden=true;
+    this.canvas.setAttribute('aria-hidden','true');host.append(this.canvas);this.ctx=this.canvas.getContext('2d');
+  }
+  setEnabled(value){this.enabled=value;if(!value)this.hide();}
+  hide(){this.active=false;this.canvas.hidden=true;}
+  trigger(now=performance.now(),force=false,kind=null){
+    if(!this.ctx||(!force&&(!this.enabled||!canScreenTrigger(now,this.lastStart))))return false;
+    if(!force&&Math.random()>.4)return false;
+    const choices=particleKinds.filter(k=>k!==this.lastKind);
+    this.kind=particleKinds.includes(kind)?kind:choices[Math.floor(Math.random()*choices.length)];
+    this.lastKind=this.kind;this.lastStart=now;this.active=true;this.canvas.hidden=false;
+    this.seeds=Array.from({length:150},()=>({x:Math.random(),y:Math.random(),a:Math.random()*Math.PI*2,s:.3+Math.random()*.7,h:Math.random()*360}));
+    return true;
+  }
+  update(now){
+    if(!this.active)return;
+    const t=(now-this.lastStart)/1000;if(t>2.2){this.hide();return;}
+    const w=Math.max(1,Math.min(1280,this.host.clientWidth)),h=Math.max(1,Math.round(w*this.host.clientHeight/Math.max(1,this.host.clientWidth)));
+    if(this.canvas.width!==w||this.canvas.height!==h){this.canvas.width=w;this.canvas.height=h;}
+    const c=this.ctx;c.clearRect(0,0,w,h);c.globalAlpha=Math.min(1,t*8)*Math.min(1,(2.2-t)*2);
+    c.globalCompositeOperation=this.kind==='confetti'?'source-over':'lighter';
+    for(let i=0;i<this.seeds.length;i++){
+      const p=this.seeds[i];let x,y,r=2+p.s*3,color=`hsl(${p.h},100%,65%)`;
+      if(this.kind==='fireworks'){
+        const burst=i%5,age=t-burst*.18;if(age<0)continue;
+        const distance=(1-Math.exp(-age*2.4))*Math.min(w,h)*.34*p.s;
+        x=w*(.15+burst*.175)+Math.cos(p.a)*distance;y=h*(.22+(burst%2)*.2)+Math.sin(p.a)*distance+age*age*32;
+        color=`hsla(${burst*72},100%,70%,${Math.max(0,1-age/2)})`;
+      }else if(this.kind==='fire'){
+        const rise=(t*.7+p.y)%1;x=p.x*w+Math.sin(t*5+p.a)*20;y=h*(1-rise*.6);r=(1-rise)*25*p.s+2;
+        color=`hsla(${15+rise*45},100%,${48+rise*25}%,${(1-rise)*.55})`;
+      }else if(this.kind==='explosion'){
+        const d=(1-Math.exp(-t*3))*Math.max(w,h)*.6*p.s;
+        x=w/2+Math.cos(p.a)*d;y=h/2+Math.sin(p.a)*d;r=(1-t/2.4)*24*p.s+1;
+        color=`hsla(${p.s*55},100%,60%,${Math.max(0,1-t/2.2)})`;
+      }else if(this.kind==='shockwave'){
+        if(i>=4)continue;const age=t-i*.16;if(age<0)continue;
+        c.strokeStyle=`hsla(${185+i*30},100%,70%,${Math.max(0,1-age/2)})`;c.lineWidth=5*(1-age/2)+1;
+        c.beginPath();c.ellipse(w/2,h/2,age*w*.65,age*h*.65,0,0,Math.PI*2);c.stroke();continue;
+      }else if(this.kind==='meteors'){
+        if(i>=30)continue;x=((p.x+t*.45)%1.5-.2)*w;y=((p.y+t*.65)%1.4-.2)*h;
+        c.strokeStyle=`hsla(${20+p.h*.12},100%,70%,.7)`;c.lineWidth=2+p.s*3;c.beginPath();c.moveTo(x-65*p.s,y-100*p.s);c.lineTo(x,y);c.stroke();
+      }else{
+        x=(p.x*w+Math.sin(t*3+p.a)*40);y=((p.y+t*.4)%1.2-.1)*h;
+        c.save();c.translate(x,y);c.rotate(p.a+t*4);c.fillStyle=color;c.fillRect(-4,-7,8,14);c.restore();continue;
+      }
+      c.fillStyle=color;c.beginPath();c.arc(x,y,Math.max(.5,r),0,Math.PI*2);c.fill();
+    }
+    c.globalAlpha=1;c.globalCompositeOperation='source-over';
+  }
+}
+
+
+export const mixedScreenKinds=[...screenKinds.map(k=>'video:'+k),...particleKinds.map(k=>'particle:'+k)];
+export class MixedScreenEffects {
+  constructor(host){this.video=new ScreenEffects(host);this.particle=new ParticleScreenEffects(host);this.enabled=true;this.lastStart=-Infinity;this.lastKind=null;}
+  setEnabled(value){this.enabled=value;this.video.setEnabled(value);this.particle.setEnabled(value);}
+  hide(){this.video.hide();this.particle.hide();}
+  trigger(now=performance.now(),force=false,kind=null){
+    if(!force&&(!this.enabled||!canScreenTrigger(now,this.lastStart)||Math.random()>.4))return false;
+    const choices=mixedScreenKinds.filter(k=>k!==this.lastKind);
+    const chosen=mixedScreenKinds.includes(kind)?kind:choices[Math.floor(Math.random()*choices.length)];
+    this.hide();const [type,id]=chosen.split(':');
+    const started=this[type].trigger(now,true,id);
+    if(started){this.lastKind=chosen;this.lastStart=now;}
+    return started;
+  }
+  update(now){this.video.update(now);this.particle.update(now);}
+}

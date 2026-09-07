@@ -30,7 +30,7 @@
 | continued.mp4 | [To Be Continued](https://tiengdong.com/en/en58975) | rexter；截取 5–7 秒，静音 |
 | gwenchana.mp4 | [Gwenchanayo](https://tiengdong.com/video-gwenchanayo-green-screen-portrait) | @semuaviralmedsosreborn2639Ty；截取 3–5 秒，静音 |
 
-全屏效果已改为下列下载视频，Canvas 仅用于抠绿合成。
+全屏效果包含下列 5 段下载视频（Canvas 抠绿合成），同时保留本项目绘制的 6 种程序动画。
 
 
 ## 全屏视频素材

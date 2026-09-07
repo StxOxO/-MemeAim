@@ -1,6 +1,19 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {keyGreen,shouldTrigger,memeClips,randomLayout,ScreenEffects,canScreenTrigger} from './meme-effects.mjs';
+import {keyGreen,shouldTrigger,memeClips,randomLayout,ScreenEffects,canScreenTrigger,MixedScreenEffects,mixedScreenKinds} from './meme-effects.mjs';
+
+test('11 种全屏效果混合选择并共用冷却和清理',()=>{
+  const old=globalThis.document;
+  globalThis.document={createElement:()=>({setAttribute(){},addEventListener(){},pause(){},play:()=>Promise.resolve(),getContext:()=>({})})};
+  try{
+    assert.equal(new Set(mixedScreenKinds).size,11);
+    const fx=new MixedScreenEffects({append(){}});
+    fx.trigger(0,true,'particle:shockwave');assert.equal(fx.particle.active,true);assert.equal(fx.video.active,false);
+    assert.equal(fx.trigger(100),false);
+    fx.trigger(4000,true,'video:smoke');assert.equal(fx.video.active,true);assert.equal(fx.particle.active,false);
+    fx.setEnabled(false);assert.equal(fx.video.active,false);assert.equal(fx.particle.active,false);assert.equal(fx.trigger(8000),false);
+  }finally{globalThis.document=old;}
+});
 
 test('全屏效果限频、关闭、暂停和超时清理',()=>{
   assert.equal(canScreenTrigger(3599,0),false);assert.equal(canScreenTrigger(3600,0),true);

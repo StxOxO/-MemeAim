@@ -1,7 +1,7 @@
 import * as THREE from './vendor/three.module.js';
 import {defaults,modes,sanitizeSettings,configKey,Session} from './core.mjs';
 import {HeldWeapon} from './weapon.js';
-import {MemeEffects,ScreenEffects} from './meme-effects.mjs';
+import {MemeEffects,MixedScreenEffects} from './meme-effects.mjs';
 
 const $=id=>document.getElementById(id);
 const STORAGE='memeaim-3d-v1';
@@ -16,7 +16,7 @@ let manifest={hit:[],miss:[]},activeAudio=[],audioContext,toastTimeout;
 let scene,camera,renderer,raycaster,geometry,targetMaterial,ringGeometry,ringMaterial;
 let weapon;
 const memes=new MemeEffects($('arena'),toast);
-const screenEffects=new ScreenEffects($('arena'));
+const screenEffects=new MixedScreenEffects($('arena'));
 let activeSynth=[];
 let inputMode=settings.control,playBounds={x:5.2,y:2.45},cursorPoint=new THREE.Vector2();
 const numericFields=['duration','sensitivity','radius','count','speed','lifetime','volume'];
