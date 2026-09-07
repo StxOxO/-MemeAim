@@ -1,4 +1,4 @@
-export const defaults = Object.freeze({duration:60,sensitivity:1,radius:0.35,count:3,speed:2,lifetime:1,control:'fps',crosshair:'cross',color:'#c5f66b',sound:true,volume:0.35});
+export const defaults = Object.freeze({duration:60,sensitivity:1,radius:0.35,count:3,speed:2,lifetime:1,control:'fps',crosshair:'cross',color:'#c5f66b',sound:true,effects:true,volume:0.35});
 export const modes = {gridshot:{name:'精准速点',label:'GRIDSHOT'},tracking:{name:'移动追踪',label:'TRACKING'},flick:{name:'闪现甩枪',label:'FLICK'}};
 export function sanitizeSettings(raw={}){
   raw=raw&&typeof raw==='object'?raw:{};
@@ -12,6 +12,7 @@ export function sanitizeSettings(raw={}){
   if(['cross','dot','circle'].includes(raw.crosshair)) result.crosshair=raw.crosshair;
   if(['#c5f66b','#ffffff','#52dfff','#ff78ac'].includes(raw.color)) result.color=raw.color;
   if(typeof raw.sound==='boolean')result.sound=raw.sound;
+  if(typeof raw.effects==='boolean')result.effects=raw.effects;
   return result;
 }
 export function configKey(mode,s){return JSON.stringify([mode,s.duration,s.radius,mode==='flick'?1:s.count,mode==='tracking'?s.speed:0,mode==='flick'?s.lifetime:0,s.control]);}
